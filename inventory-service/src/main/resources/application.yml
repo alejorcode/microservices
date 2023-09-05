@@ -2,4 +2,4 @@ spring:
   application:
     name: inventory-service
   config:
-    import: "optional:configserver:http://localhost:8084"
+    import: optional:configserver:http://localhost:8084

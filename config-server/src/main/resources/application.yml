@@ -10,4 +10,4 @@ spring:
         git:
           default-label: config-server
           uri: https://github.com/alejorcode/microservices.git
-          search-paths: configurations
+          search-paths: classpath:/configurations
