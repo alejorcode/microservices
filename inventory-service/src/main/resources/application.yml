@@ -1,16 +1,5 @@
-server:
-  port: 8083
-  
 spring:
   application:
-    name: inventory-service 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ms_inventory
-    username: root
-    password: alejo12
-  jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    name: inventory-service
+  config:
+    import: optional:configserver:http://localhost:8084
