@@ -20,7 +20,7 @@
     </properties>
 
     <modules>
-		<module>config-service</module>
+		<module>config-server</module>
         <module>inventory-service</module>
         <module>orders-service</module>
         <module>products-service</module>
