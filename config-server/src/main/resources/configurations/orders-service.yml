@@ -1,17 +1,79 @@
 server:
-  port: 8082
-  
+  port: 0
+
 spring:
   application:
     name: orders-service 
+    
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ms_orders
     username: root
     password: alejo12
+    
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
+    
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8180/realms/microservices-realm/protocol/openid-connect/certs 
+         
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      retries: 1
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+          
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://eureka:password@localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus      
+      basePath: /actuator/orders
+  endpoint: 
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+      
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+        
+resilience4j:
+  circuitbreaker:
+    instances:
+      orders-service:
+        register-health-indicator: true
+        sliding-window-size: 5
+        sliding-window-type: count_based
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        automatic-transition-from-open-to-half-open-enabled: true
+        permitted-number-of-calls-in-half-open-state: 3
+        
+logging:
+  pattern:
+    level: "%5p [${spring.application.name}, %X{traceId:-}, %X{spanId:-}]"
+
+
+
   

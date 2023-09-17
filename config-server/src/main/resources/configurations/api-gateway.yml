@@ -1,0 +1,101 @@
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://eureka:password@localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+
+        - id: orders-service
+          uri: lb://orders-service
+          predicates:
+            - Path=/api/order/**
+
+        - id: products-service
+          uri: lb://products-service
+          predicates:
+            - Path=/api/product/**
+
+        - id: discovery-service
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+
+        - id: discovery-service-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+        - id: inventory-service-actuator
+          uri: lb://inventory-service/actuator/inventory/**
+          predicates:
+            - Path=/actuator/inventory/**
+
+        - id: orders-service-actuator
+          uri: lb://orders-service/actuator/orders/**
+          predicates:
+            - Path=/actuator/orders/**
+
+        - id: products-service-actuator
+          uri: lb://products-service/actuator/products/**
+          predicates:
+            - Path=/actuator/products/**
+            
+        - id: discovery-service-actuator
+          uri: http://localhost:8761/actuator/discovery/**
+          predicates:
+            - Path=/actuator/dicovery/**
+
+      default-filters:
+        - SaveSession
+        - TokenRelay
+             
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/microservices-realm
+        registration:
+          keycloak:
+            provider: keycloak
+            scope: openid
+            client-id: microservices_client
+            client-secret: 0woaSmijeKNvCs5Sp0IIubffBQo9u06y
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/login/oauth2/code/keycloak'
+            
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+      base-path: /actuator
+      
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+      
+logging:
+  pattern:
+    level: "%5p [${spring.application.name}, %X{traceId:-}, %X{spanId:-}]"
+
+

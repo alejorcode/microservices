@@ -3,6 +3,7 @@ package com.alejorcode.products_service.controllers;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ public class ProductController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void addProduct(@RequestBody ProductRequest productRequest) {
 		this.productService.addProduct(productRequest);
 		
@@ -32,6 +34,7 @@ public class ProductController {
 	
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public List<ProductResponse>getAllProducts(){
 		return this.productService.getAllProducts();
 	}

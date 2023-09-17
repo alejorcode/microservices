@@ -31,3 +31,23 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### keycloak ###
+keycloak-22.0.1/
+
+### zipkin ###
+zipkin-server-2.24.3-exec.jar
+
+### prometheus ###
+prometheus-2.47.0.windows-amd64/
+
+### grafana ###
+grafana-10.1.1/
+
+
+
+
+
+
+
